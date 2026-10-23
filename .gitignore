@@ -1,0 +1,21 @@
+# 비밀 값
+.env
+
+# 파이썬·노드
+venv/
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+package-lock.json
+
+# 데이터: 매뉴얼 원문(제조사 저작권)과 그 원문이 들어간 색인은 저장소에 올리지 않는다.
+# 수집·색인 스크립트로 각자 만든다 (README '실행 방법').
+data/raw/
+chroma_db/
+
+# 평가 스크립트가 만드는 결과 (매뉴얼 원문 인용이 들어간다)
+docs/*_실행결과.md
+docs/*_실행결과.json
+docs/화면_점검결과.md
+docs/screenshots/

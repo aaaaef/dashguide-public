@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>대시가이드 — 계기판 경고등 해설</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='12' fill='%230b1118'/><path d='M10 33a14 14 0 1 1 28 0' stroke='%2322d3ee' stroke-width='4' fill='none' stroke-linecap='round'/><path d='M24 33l8-10' stroke='%23fbbf24' stroke-width='3.5' stroke-linecap='round'/></svg>">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#home" aria-label="대시가이드 홈">
+        <svg class="gauge" viewBox="0 0 48 48" aria-hidden="true">
+          <path class="gauge-arc" d="M8 34a16 16 0 1 1 32 0"/>
+          <path class="gauge-ticks" d="M10.5 26.5l3 1M15 17.5l2.4 2.1M24 14v3.2M33 17.5l-2.4 2.1M37.5 26.5l-3 1"/>
+          <path class="gauge-needle" d="M24 34l9-11"/>
+          <circle class="gauge-hub" cx="24" cy="34" r="3.4"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">대시가이드</span>
+          <span class="brand-en">DASHGUIDE</span>
+        </span>
+      </a>
+      <button id="car-chip" class="car-chip" type="button" hidden>
+        <span class="car-chip-label">MY CAR</span>
+        <span id="car-chip-text" class="car-chip-value"></span>
+        <span class="car-chip-edit" aria-hidden="true">변경</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 기능 선택 메뉴 (화면 중앙) -->
+  <nav id="nav" class="nav" aria-label="기능 선택" hidden>
+    <div class="nav-inner">
+      <button class="nav-btn" data-page="home" type="button" aria-label="홈">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
+      </button>
+      <button class="nav-btn" data-page="find" type="button">경고등 찾기</button>
+      <button class="nav-btn" data-page="card" type="button">진단 카드</button>
+      <button class="nav-btn" data-page="ask" type="button">질문하기</button>
+      <button class="nav-btn" data-page="recall" type="button">내 차 리콜 <span id="recall-badge" class="badge-count" hidden></span></button>
+    </div>
+  </nav>
+
+  <div class="disclaimer" role="note">
+    <span class="warn-lamp" aria-hidden="true">!</span>
+    <span id="disclaimer-text">이 안내는 정비 전문가의 진단을 대신하지 않습니다. 빨간색 경고등이 켜지면 안전한 곳에 정차하고 점검을 받으세요.</span>
+  </div>
+
+  <main class="container">
+    <div id="blocker" class="blocker" hidden></div>
+
+    <!-- 첫 화면: 내 차 설정 -->
+    <section id="page-onboard" class="page onboard" hidden>
+      <div class="ignition">
+        <p class="eyebrow">STEP 0 <span class="ko">· 내 차 설정</span></p>
+        <h1>시동을 걸기 전에, <span class="accent">내 차</span>를 알려 주세요</h1>
+        <p class="muted">같은 동력 방식이면 계기판 경고등 체계가 대부분 같아요. 차종·연식은 리콜 확인에도 쓰여요.</p>
+
+        <div class="ob-step">
+          <div class="ob-label"><span class="ob-num">1</span>제조사</div>
+          <div id="ob-brand" class="chips seg"></div>
+        </div>
+        <div class="ob-step">
+          <div class="ob-label"><span class="ob-num">2</span>차종</div>
+          <div id="ob-model" class="chips model-grid"></div>
+        </div>
+        <div class="ob-step">
+          <div class="ob-label"><span class="ob-num">3</span>연료·동력 방식 <span class="muted small">모르면 '모름'</span></div>
+          <div id="ob-powertrain" class="chips seg"></div>
+        </div>
+        <div class="ob-step">
+          <label class="ob-label" for="ob-year"><span class="ob-num">4</span>연식 <span class="muted small">선택</span></label>
+          <div class="year-step" role="group" aria-label="연식 입력">
+            <button type="button" class="ys-btn" data-step="-1" aria-label="한 해 전"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
+            <input id="ob-year" class="ob-year" type="text" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="예: 2022">
+            <button type="button" class="ys-btn" data-step="1" aria-label="한 해 뒤"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg></button>
+          </div>
+        </div>
+
+        <div class="ob-actions">
+          <button id="ob-cancel" class="btn ghost" type="button" hidden>취소</button>
+          <button id="ob-start" class="btn start" type="button" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M6.3 7.3a8 8 0 1 0 11.4 0"/></svg>
+            <span>시동 걸기</span>
+          </button>
+        </div>
+        <p id="ob-hint" class="muted small center">차종을 고르면 시작할 수 있어요.</p>
+      </div>
+    </section>
+
+    <!-- 홈: 기능 선택 -->
+    <section id="page-home" class="page home" hidden>
+      <div class="home-head">
+        <p class="eyebrow" id="home-car"></p>
+        <h1>무엇을 도와드릴까요?</h1>
+        <p class="muted">계기판에 뜬 신호의 뜻과 지금 할 일을, 공식 취급설명서 근거로 알려 드려요.</p>
+      </div>
+      <div class="tiles">
+        <button class="tile" data-go="find" type="button">
+          <span class="tile-icon"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></span>
+          <span class="tile-title">경고등 찾기</span>
+          <span class="tile-desc">이름을 몰라도 색과 모양으로 찾아요</span>
+        </button>
+        <button class="tile" data-go="card" type="button">
+          <span class="tile-icon"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
+          <span class="tile-title">진단 카드</span>
+          <span class="tile-desc">지금 얼마나 급한지, 무엇을 해야 하는지</span>
+        </button>
+        <button class="tile" data-go="ask" type="button">
+          <span class="tile-icon"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg></span>
+          <span class="tile-title">질문하기</span>
+          <span class="tile-desc">근거 번호와 함께 답해요</span>
+        </button>
+        <button class="tile" data-go="recall" type="button">
+          <span class="tile-icon"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M12 8v5M12 16v.5"/></svg></span>
+          <span class="tile-title">내 차 리콜</span>
+          <span class="tile-desc" id="tile-recall-desc">내 차종의 국내 리콜 기록</span>
+        </button>
+      </div>
+      <div class="readouts">
+        <div class="readout"><span class="ro-value" id="ro-signals">100</span><span class="ro-label">해설하는 신호</span></div>
+        <div class="readout"><span class="ro-value" id="ro-docs">-</span><span class="ro-label">근거 문서 조각</span></div>
+        <div class="readout"><span class="ro-value" id="ro-recalls">-</span><span class="ro-label">내 차 리콜 기록</span></div>
+      </div>
+    </section>
+
+    <!-- 경고등 찾기 -->
+    <section id="page-find" class="page" hidden>
+      <div class="page-head">
+        <h2>어떤 표시가 떴나요?</h2>
+        <p class="muted">이름을 몰라도 괜찮아요. <b>색과 모양</b>으로 설명해 보세요.</p>
+      </div>
+      <div class="panel">
+        <form id="find-form" class="search-box" autocomplete="off">
+          <input id="find-input" type="search" maxlength="100" placeholder="예: 주황색인데 타이어 안에 느낌표 있는 거" aria-label="표시 설명">
+          <button class="btn primary" type="submit">찾기</button>
+        </form>
+        <div class="filters">
+          <div class="filter-group"><span class="filter-label">색상</span><div id="color-chips" class="chips"></div></div>
+          <div class="filter-group"><span class="filter-label">종류</span><div id="kind-chips" class="chips"></div></div>
+        </div>
+      </div>
+      <div id="find-results"></div>
+    </section>
+
+    <!-- 진단 카드 -->
+    <section id="page-card" class="page" hidden>
+      <div class="page-head">
+        <h2>진단 카드</h2>
+        <p class="muted">신호를 고르면 긴급도·의미·지금 할 일·하지 말 것을 근거와 함께 보여 드려요.</p>
+      </div>
+      <div id="card-picker"></div>
+      <div id="card-body"></div>
+    </section>
+
+    <!-- 질문하기 -->
+    <section id="page-ask" class="page" hidden>
+      <div class="ask-head">
+        <div id="ask-picker"></div>
+        <div class="ask-bar"><div id="chat-list" class="chat-list"></div><div id="chat-tools" class="chat-tools"></div></div>
+      </div>
+      <div id="chat-thread" class="chat-thread"></div>
+      <form id="ask-form" class="composer" autocomplete="off">
+        <textarea id="ask-input" rows="1" maxlength="500" placeholder="계기판 신호에 대해 물어보세요" aria-label="질문"></textarea>
+        <button class="btn primary" type="submit" id="ask-send">보내기</button>
+      </form>
+    </section>
+
+    <!-- 내 차 리콜 -->
+    <section id="page-recall" class="page" hidden>
+      <div class="page-head">
+        <h2>내 차 리콜</h2>
+        <p class="muted">한국교통안전공단 차종별 리콜 기록에서 내 차종·동력 방식·연식에 맞는 기록을 찾았어요.</p>
+      </div>
+      <div id="recall-body"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-brand">대시가이드 <span class="en">DASHGUIDE</span> · <span id="index-status"></span></p>
+      <p class="muted">출처: 📘 현대·기아 취급설명서(교육 목적 비상업적 이용, 저작권은 각 제조사) ·
+        📗 위키백과(CC BY-SA 4.0, 원리·용어 질문에만 사용) · 🔔 한국교통안전공단 차종별 리콜(공공데이터포털)</p>
+      <p class="muted">⚠️ 정비 전문가의 진단을 대신하지 않습니다. 근거 문서에서 확인되지 않는 내용은 답하지 않습니다.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
